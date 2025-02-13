@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Loans</title>
+</head>
+<body>
+<h1>Loans List</h1>
+<a href="/">Home</a>
+<table border="1">
+    <tr>
+        <th>ID</th>
+        <th>Book</th>
+        <th>User</th>
+        <th>Loan Date</th>
+        <th>Return Date</th>
+    </tr>
+    <tr th:each="loan : ${loans}">
+        <td th:text="${loan.id}"></td>
+        <td th:text="${loan.book.title}"></td>
+        <td th:text="${loan.user.name}"></td>
+        <td th:text="${loan.loanDate}"></td>
+        <td th:text="${loan.returnDate}"></td>
+    </tr>
+</table>
+</body>
+</html>

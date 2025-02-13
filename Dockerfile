@@ -13,6 +13,7 @@ FROM amazoncorretto:21-alpine-jdk
 # Copy the .war file
 COPY --from=builder /app/target/library_management-0.0.1-SNAPSHOT.war /app/library_management.war
 
+
 # Verify the .war file is copied (debugging)
 RUN ls -l /app/library_management.war
 

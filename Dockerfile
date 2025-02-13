@@ -1,5 +1,6 @@
 FROM maven:3.8.8-amazoncorretto-21 AS builder
- # Use Maven 3.8.8
+# Use Maven 3.8.8
+
 COPY . /app
 WORKDIR /app
 RUN mvn clean package -DskipTests

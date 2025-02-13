@@ -1,30 +1,32 @@
 FROM maven:3.8.8-amazoncorretto-21 AS builder
 
-# Copy the source code into the container
 COPY . /app
-
-# Set the working directory
 WORKDIR /app
-
-# Clean and build the project, skipping tests
 RUN mvn clean package -DskipTests
 
-# *** KEY FIX: Use the actual JAR file name from your Maven build ***
-# The following command will show you the actual JAR file name in the logs
+# Verify the .war file is created (debugging)
 RUN ls /app/target
 
-# Use the Amazon Corretto JDK 21 with Alpine for the runtime stage
 FROM amazoncorretto:21-alpine-jdk
+ # Or tomcat:9.0-jre21-alpine if using Tomcat
 
-# Copy the .jar file from the builder stage (adjust path if necessary)
-# *** REPLACE library_management-0.0.1-SNAPSHOT.jar with the actual JAR file name if different ***
-COPY --from=builder /app/target/library_management-0.0.1-SNAPSHOT.jar /app/library_management.jar
+# Copy the .war file
+COPY --from=builder /app/target/library_management-0.0.1-SNAPSHOT.war /app/library_management.war
 
-# Verify the .jar file is in the correct location (for debugging)
-RUN ls -l /app/library_management.jar
+# Verify the .war file is copied (debugging)
+RUN ls -l /app/library_management.war
 
-# Expose port 8080 for the application
 EXPOSE 8080
 
-# Set the entrypoint to run the application
-ENTRYPOINT ["java", "-jar", "/app/library_management.jar"]
+# For a WAR file, use the appropriate command to deploy to Tomcat (or other servlet container)
+# If using embedded Tomcat:
+# ENTRYPOINT ["java", "-jar", "/app/library_management.war"]
+
+# If using a separate Tomcat container, you'd copy the WAR to Tomcat's webapps directory
+# and use Tomcat's startup script.
+# Example (if using a Tomcat image):
+# COPY --from=builder /app/target/library_management-0.0.1-SNAPSHOT.war /usr/local/tomcat/webapps/
+# ENTRYPOINT ["catalina.sh", "run"]
+
+# Or if embedded tomcat
+ENTRYPOINT ["java", "-jar", "/app/library_management.war"]
